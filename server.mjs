@@ -48,14 +48,28 @@ const updatePlayer = (playerData) => {
   });
 };
 
+/**
+ * Remove player from game state.
+ * @param {number} playerId - The player data to be removed.
+ */
+const removePlayer = (playerId) => {
+  gameState.players = gameState.players.filter((player) => {
+    return player.playerId !== playerId;
+  });
+};
+
 sockserver.on("connection", (ws) => {
+  // Give new player an id.
   playerId++;
-  console.log(`Player ${playerId} connected. Adding player to game state!`);
-  addPlayer({ playerId: playerId });
+
+  // Add player to game state.
+  addPlayer({ playerId });
+  console.log(`Player ${playerId} connected and added to game state!`);
 
   // Test for open connection.
   const isOpen = (ws) => ws.readyState === ws.OPEN;
 
+  // Listen to client for messages.
   ws.on("message", (message) => {
     // Player data.
     const messageObject = JSON.parse(message.toString());
@@ -77,5 +91,9 @@ sockserver.on("connection", (ws) => {
     console.log("websocket error");
   };
 
-  ws.on("close", () => console.log("Client has disconnected!"));
+  ws.on("close", () => {
+    // Remove player from game state.
+    removePlayer(playerId);
+    console.log(`Player ${playerId} has disconnected!`);
+  });
 });
