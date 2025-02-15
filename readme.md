@@ -1,1 +1,1 @@
-# Simple web socker game.
+# Simple web socket game.
