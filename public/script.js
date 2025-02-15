@@ -6,7 +6,7 @@ const ws = new WebSocket("ws://localhost:3000");
 // Set circle properties
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-const radius = 50;
+const radius = 5;
 
 ws.onopen = () => {
   console.log("Connected to WebSocket server");
@@ -25,6 +25,13 @@ ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
   // Handle game updates, e.g., redraw objects based on received data
   console.log(data);
+  const player = data.playerId;
+  //ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Start a new path
+  ctx.beginPath();
+  // Draw the circle
+  ctx.arc(data.x, data.y, radius, 0, 2 * Math.PI);
+  ctx.stroke();
 };
 
 ws.onclose = () => {
