@@ -3,8 +3,22 @@ const ctx = canvas.getContext("2d");
 
 const ws = new WebSocket("ws://localhost:3000");
 
+// Set circle properties
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const radius = 50;
+
 ws.onopen = () => {
   console.log("Connected to WebSocket server");
+  // Start a new path
+  ctx.beginPath();
+  // Draw the circle
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  // Stroke the circle (draw outline)
+  ctx.stroke();
+  // Optional: Fill the circle
+  // ctx.fillStyle = 'blue';
+  // ctx.fill();
 };
 
 ws.onmessage = (event) => {

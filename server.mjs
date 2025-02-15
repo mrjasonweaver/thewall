@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = 3000;
-let count = 0;
+let playerId = 0;
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -19,9 +19,8 @@ const server = app.listen(port, () => {
 const sockserver = new WebSocketServer({ server });
 
 sockserver.on("connection", (ws) => {
-  count++;
-  const player = count;
-  console.log(`New player number ${player} connected!`);
+  playerId++;
+  console.log(`Player ${playerId} connected!`);
 
   function isOpen(ws) {
     return ws.readyState === ws.OPEN;
@@ -33,9 +32,10 @@ sockserver.on("connection", (ws) => {
       if (!isOpen(sockserver)) {
         return;
       }
-
-      const data = JSON.stringify(message.toString());
-      client.send(data);
+      const messageObject = JSON.parse(message.toString());
+      const data = { ...messageObject, playerId };
+      const playerData = JSON.stringify(data);
+      client.send(playerData);
     });
   });
 
