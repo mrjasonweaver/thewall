@@ -4,12 +4,12 @@ const ctx = canvas.getContext("2d");
 const ws = new WebSocket("ws://localhost:3000");
 
 // Set circle properties
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
 const radius = 10;
 
+// Start player ready.
 ws.onopen = () => {
-  console.log("Connected to WebSocket server");
+  const startPlayer = "Player ready";
+  ws.send(startPlayer);
 };
 
 /**
@@ -20,7 +20,7 @@ const addPlayerToCanvas = (player) => {
   // Start a new path
   ctx.beginPath();
   // Draw the circle
-  ctx.arc(player.data?.x, player.data?.y, radius, 0, 2 * Math.PI);
+  ctx.arc(player.x, player.y, radius, 0, 2 * Math.PI);
   ctx.stroke();
 };
 
@@ -33,21 +33,42 @@ const clearGameCanvas = () => {
 
 // Handle game updates, e.g., redraw objects based on received data
 ws.onmessage = (event) => {
+  // Extract data.
   const data = JSON.parse(event.data);
-  clearGameCanvas();
 
-  console.log(data);
+  if (data?.message === "Start player") {
+    // Log player info.
+    console.log(`Player ${data.playerId} is ready!`);
 
-  data.players.forEach((player) => {
-    addPlayerToCanvas(player);
-  });
+    // Store player in browser.
+    if (!localStorage.getItem("thewall")) {
+      localStorage.setItem("thewall", data.playerId);
+    }
+  } else {
+    // Clear canvas.
+    clearGameCanvas();
+
+    // Add player data.
+    data.players.forEach((player) => {
+      addPlayerToCanvas(player);
+    });
+  }
 };
 
 ws.onclose = () => {
-  console.log("Disconnected from WebSocket server");
+  // Remove player.
+  localStorage.removeItem("thewall");
+  console.log("Player removed.");
 };
 
 // Game logic (example: sending player input)
 canvas.addEventListener("mousemove", (event) => {
-  ws.send(JSON.stringify({ x: event.clientX, y: event.clientY }));
+  const playerId = +localStorage.getItem("thewall");
+  ws.send(
+    JSON.stringify({
+      x: event.clientX,
+      y: event.clientY,
+      playerId,
+    }),
+  );
 });

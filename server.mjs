@@ -40,6 +40,7 @@ const addPlayer = (player) => {
  */
 const updatePlayer = (playerData) => {
   gameState.players = gameState.players.map((player) => {
+    console.log(player.playerId, playerData.playerId);
     if (player.playerId === playerData.playerId) {
       return playerData;
     } else {
@@ -71,20 +72,29 @@ sockserver.on("connection", (ws) => {
 
   // Listen to client for messages.
   ws.on("message", (message) => {
-    // Player data.
-    const messageObject = JSON.parse(message.toString());
-    const data = { ...messageObject, playerId };
+    if (message.toString() === "Player ready") {
+      sockserver.clients.forEach((client) => {
+        // Ensure socket is open.
+        if (!isOpen(sockserver)) {
+          return;
+        }
+        client.send(JSON.stringify({ message: "Start player", playerId }));
+      });
+    } else {
+      // Player data.
+      const data = JSON.parse(message.toString());
 
-    // Handle player state management.
-    updatePlayer(data);
+      // Handle player state management.
+      updatePlayer(data);
 
-    sockserver.clients.forEach((client) => {
-      // Ensure socket is open.
-      if (!isOpen(sockserver)) {
-        return;
-      }
-      client.send(JSON.stringify(gameState));
-    });
+      sockserver.clients.forEach((client) => {
+        // Ensure socket is open.
+        if (!isOpen(sockserver)) {
+          return;
+        }
+        client.send(JSON.stringify(gameState));
+      });
+    }
   });
 
   ws.onerror = function () {
