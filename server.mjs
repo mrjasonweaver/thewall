@@ -40,7 +40,6 @@ const addPlayer = (player) => {
  */
 const updatePlayer = (playerData) => {
   gameState.players = gameState.players.map((player) => {
-    console.log(player.playerId, playerData.playerId);
     if (player.playerId === playerData.playerId) {
       return playerData;
     } else {
