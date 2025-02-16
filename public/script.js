@@ -31,7 +31,7 @@ const clearGameCanvas = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 };
 
-// Handle game updates, e.g., redraw objects based on received data
+// Handle game updates.
 ws.onmessage = (event) => {
   // Extract data.
   const data = JSON.parse(event.data);
@@ -66,8 +66,8 @@ canvas.addEventListener("mousemove", (event) => {
   const playerId = +localStorage.getItem("thewall");
   ws.send(
     JSON.stringify({
-      x: event.clientX,
-      y: event.clientY,
+      x: event.clientX * 1.25,
+      y: event.clientY * 1.25,
       playerId,
     }),
   );
