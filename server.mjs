@@ -81,7 +81,8 @@ sockserver.on("connection", (ws) => {
       });
     } else {
       // Player data.
-      const data = JSON.parse(message.toString());
+      const messageObject = JSON.parse(message.toString());
+      const data = { ...messageObject, playerId };
 
       // Handle player state management.
       updatePlayer(data);
