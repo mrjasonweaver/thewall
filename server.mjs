@@ -30,7 +30,7 @@ const gameState = {
  * Add a new player to game.
  * @param {object} player - The player data to be added.
  */
-const addPlayer = (player) => {
+export const addPlayer = (player) => {
   gameState.players.push(player);
 };
 
@@ -38,7 +38,7 @@ const addPlayer = (player) => {
  * Update player game state.
  * @param {object} playerData - The player data to be updated.
  */
-const updatePlayer = (playerData) => {
+export const updatePlayer = (playerData) => {
   gameState.players = gameState.players.map((player) => {
     if (player.playerId === playerData.playerId) {
       return playerData;
@@ -52,7 +52,7 @@ const updatePlayer = (playerData) => {
  * Remove player from game state.
  * @param {number} playerId - The player data to be removed.
  */
-const removePlayer = (playerId) => {
+export const removePlayer = (playerId) => {
   gameState.players = gameState.players.filter((player) => {
     return player.playerId !== playerId;
   });
